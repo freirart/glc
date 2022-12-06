@@ -7,4 +7,7 @@ P = { 'S': ['aAc', 'bBc'], 'A': ['aAc', 'B', ''], 'B': ['bBc', '']}
 
 my_glc = GLC(Vn, Vt, S, P)
 
-my_glc.generate_sentences(9)
+print(my_glc)
+
+if my_glc.validate_glc():
+    my_glc.generate_sentences(9)

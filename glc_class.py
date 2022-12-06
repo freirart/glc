@@ -68,3 +68,77 @@ class GLC:
         print(sentences)
 
         return sentences
+    
+    def is_upper_char(self, char):
+        UPPER_ASCII_MIN = 65
+        UPPER_ASCII_MAX = 90
+
+        return (
+            isinstance(char, str) and
+            ord(char) >= UPPER_ASCII_MIN and
+            ord(char) <= UPPER_ASCII_MAX
+        )
+    
+    def is_lower_char(self, char):
+        LOWER_ASCII_MIN = 61
+        LOWER_ASCII_MAX = 122
+
+        return (
+            isinstance(char, str) and
+            ord(char) >= LOWER_ASCII_MIN and
+            ord(char) <= LOWER_ASCII_MAX
+        )
+
+    def is_non_terminal(self, char):
+        return isinstance(char, str) and self.is_upper_char(char) and char in self.Vn
+    
+    def is_terminal(self, char):
+        return isinstance(char, str) and self.is_lower_char(char) and char in self.Vt
+    
+    def validate_glc(self):
+        are_non_terminals_valid = (
+            isinstance(self.Vn, list) and 
+            not len([vn for vn in self.Vn if not self.is_non_terminal(vn)])
+        )
+
+        if are_non_terminals_valid:
+            are_terminals_valid = (
+                isinstance(self.Vn, list) and 
+                not len([vn for vn in self.Vt if not self.is_terminal(vn)])
+            )
+            
+            if are_terminals_valid:
+                if isinstance(self.P, dict):
+                    for non_terminal, productions in self.P.items():
+                        if (
+                            self.is_non_terminal(non_terminal) and
+                            isinstance(productions, list)
+                        ):
+                            are_productions_valid = False
+
+                            for p in productions:
+                                is_production_valid = False
+
+                                for c in p:
+                                    if (
+                                        self.is_terminal(c) or
+                                        self.is_non_terminal(c)
+                                    ):
+                                        continue
+                                    break
+                                else:
+                                    is_production_valid = True
+                                
+                                if not is_production_valid:
+                                    break
+                            else:
+                                are_productions_valid = True
+                            
+                            if not are_productions_valid:
+                                break
+                        else:
+                            break
+                    else: # went through all productions and they are all valid
+                        return self.is_non_terminal(self.S)
+        return False
+        
