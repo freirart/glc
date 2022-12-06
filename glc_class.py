@@ -5,6 +5,7 @@ class GLC:
         self.S = S
         self.P = P
         self.present_class = f"Não Terminais: {Vn}\nTerminais: {Vt}\nSímbolo Inicial: {S}\nProduções: {P}\n"
+        self.production_separator = '->'
 
     def __str__(self):
         return self.present_class
@@ -95,6 +96,27 @@ class GLC:
     def is_terminal(self, char):
         return isinstance(char, str) and self.is_lower_char(char) and char in self.Vt
     
+    def validate_production(self, production_str: str) -> bool:
+        if isinstance(production_str, str) and self.production_separator in production_str:
+            try:
+                non_terminal, production = production_str.split(self.production_separator)
+                if self.is_non_terminal(non_terminal):
+                    for char in production:
+                        if (
+                            self.is_terminal(char) or
+                            self.is_non_terminal(char)
+                        ):
+                            continue
+                        break
+                    else:
+                        return True
+
+            except:
+                return False
+        
+        return False
+
+    
     def validate_glc(self):
         are_non_terminals_valid = (
             isinstance(self.Vn, list) and 
@@ -114,28 +136,16 @@ class GLC:
                             self.is_non_terminal(non_terminal) and
                             isinstance(productions, list)
                         ):
-                            are_productions_valid = False
-
                             for p in productions:
-                                is_production_valid = False
+                                formatted_production = (
+                                    f"{non_terminal}{self.production_separator}{p}"
+                                )
 
-                                for c in p:
-                                    if (
-                                        self.is_terminal(c) or
-                                        self.is_non_terminal(c)
-                                    ):
-                                        continue
-                                    break
-                                else:
-                                    is_production_valid = True
-                                
-                                if not is_production_valid:
+                                if not self.validate_production(formatted_production):
                                     break
                             else:
-                                are_productions_valid = True
-                            
-                            if not are_productions_valid:
-                                break
+                                continue
+                            break
                         else:
                             break
                     else: # went through all productions and they are all valid
