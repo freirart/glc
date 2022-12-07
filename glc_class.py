@@ -4,7 +4,7 @@ class GLC:
         self.Vt = Vt
         self.S = S
         self.P = P
-        self.present_class = f"Não Terminais: {Vn}\nTerminais: {Vt}\nSímbolo Inicial: {S}\nProduções: {P}\n"
+        self.present_class = f"\nNão Terminais: {Vn}\nTerminais: {Vt}\nSímbolo Inicial: {S}\nProduções: {P}\n"
         self.production_separator = '->'
 
     def __str__(self):
