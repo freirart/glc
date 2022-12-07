@@ -35,22 +35,27 @@ Escolha uma opção: """
     def generate_sentences(self, largest_sencente_length: int) -> list:
         sentences = []
 
-        productions_to_check = ['S']
+        productions_to_check = [self.S]
 
         fn = lambda x: len(x) == len([c for c in x if c.islower()])
 
-        while True:
+        while productions_to_check:
             curr_production = productions_to_check[0]
 
             found_non_terminal = False
 
             # replaces first non-terminal found on sentece by its productions
             for index, sentence_char in enumerate(curr_production):
-                if sentence_char.isupper():
+                registered_productions = self.P.get(sentence_char)
+                if (
+                    sentence_char.isupper() and
+                    registered_productions and
+                    isinstance(registered_productions, list)
+                ):
                     found_non_terminal = True
                     non_terminal_productions = []
 
-                    for p in self.P[sentence_char]:
+                    for p in registered_productions:
                         replaced_non_terminal = (
                             (
                                 curr_production[:index] +
@@ -85,26 +90,35 @@ Escolha uma opção: """
 
                 productions_to_check = productions_to_check[1:]
 
+        if len(sentences) == 1 and sentences[0] == self.S:
+            sentences = []
+
         print(sentences)
 
         return sentences
     
-    def is_upper_char(self, char):
+    @staticmethod
+    def is_upper_char(char):
         UPPER_ASCII_MIN = 65
         UPPER_ASCII_MAX = 90
 
         return (
+            char and
             isinstance(char, str) and
+            len(char) == 1 and
             ord(char) >= UPPER_ASCII_MIN and
             ord(char) <= UPPER_ASCII_MAX
         )
     
-    def is_lower_char(self, char):
-        LOWER_ASCII_MIN = 61
+    @staticmethod
+    def is_lower_char(char):
+        LOWER_ASCII_MIN = 97
         LOWER_ASCII_MAX = 122
 
         return (
+            char and
             isinstance(char, str) and
+            len(char) == 1 and
             ord(char) >= LOWER_ASCII_MIN and
             ord(char) <= LOWER_ASCII_MAX
         )

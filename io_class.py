@@ -4,11 +4,19 @@ from typing import Union
 from re import sub
 from json import loads
 
+from glc_class import GLC
+
 class IO:
+    def __init__(self):
+        self.bool_expected_answer = ["Y", "n"]
+
     @staticmethod
-    def get_first_char(msg: str, is_int=False, is_str=False, expected_values=[]) -> Union[str, int]:
+    def get_first_char(msg: str, is_int=False, is_str=False, expected_values=[], pre_input=None) -> Union[str, int]:
         while True:
-            op = input(msg)
+            if pre_input:
+                op = IO.__input_with_prefill(msg, pre_input)
+            else:
+                op = input(msg)
 
             regex_str = "\s"
             err_message = "\nErro! Por favor insira um"
@@ -45,14 +53,37 @@ class IO:
                 print(err_message)
     
     @staticmethod
-    def get_json_parsed_from_input(prompt, text):
+    def get_list_from_input(prompt, text, isupper=False, islower=False):
+        err_message = '\nO valor digitado é inválido! Favor tentar novamente.\n'
+
         while True:
             try:
                 value_inputted = IO.__input_with_prefill(prompt, text)
                 json_parsed = loads(value_inputted)
-                return json_parsed
+
+                if json_parsed and isinstance(json_parsed, list):
+                    if (
+                        (
+                            isupper and
+                            len([
+                                c
+                                for c in json_parsed
+                                if not GLC.is_upper_char(c)
+                            ])
+                        ) or (
+                            islower and
+                            len([
+                                c
+                                for c in json_parsed
+                                if not GLC.is_lower_char(c)
+                            ])
+                        )
+                    ):
+                        raise ValueError(err_message)
+
+                    return json_parsed
             except:
-                print('\nO valor digitado é inválido! Favor tentar novamente.\n')
+                print(err_message)
 
     @staticmethod
     def __input_with_prefill(prompt, text):
