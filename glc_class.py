@@ -4,14 +4,33 @@ class GLC:
         self.Vt = Vt
         self.S = S
         self.P = P
-        self.present_class = f"\nNão Terminais: {Vn}\nTerminais: {Vt}\nSímbolo Inicial: {S}\nProduções: {P}\n"
+        self.present_class = self.get_updated_present_class_str()
         self.production_separator = '->'
+        self.initial_menu = """
+<1> Exibir GLC atual
+<2> Editar GLC atual
+<3> Exibir Produções da GLC atual
+<0> Sair
+
+Escolha uma opção: """
+        self.edit_glc_menu = """
+<1> Exibir GLC
+<2> Editar Não-Terminais
+<3> Editar Terminais
+<4> Editar Símbolo Inicial
+<5> Editar Produções
+<0> Voltar
+
+Escolha uma opção: """
 
     def __str__(self):
-        return self.present_class
+        return self.get_updated_present_class_str()
     
     def __repr__(self):
-        return self.present_class
+        return self.get_updated_present_class_str()
+
+    def get_updated_present_class_str(self):
+        return f"\nNão Terminais: {self.Vn}\nTerminais: {self.Vt}\nSímbolo Inicial: {self.S}\nProduções: {self.P}\n"
 
     def generate_sentences(self, largest_sencente_length: int) -> list:
         sentences = []

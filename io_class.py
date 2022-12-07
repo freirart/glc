@@ -1,5 +1,8 @@
+import readline
+
 from typing import Union
 from re import sub
+from json import loads
 
 class IO:
     @staticmethod
@@ -36,7 +39,27 @@ class IO:
                 ):
                     return formatted_char
                 
-                err_message = err_message[:-1] + ' válido.'
+                err_message = err_message[:-1] + ' válido(a).'
                 raise ValueError(err_message)
             except:
                 print(err_message)
+    
+    @staticmethod
+    def get_json_parsed_from_input(prompt, text):
+        while True:
+            try:
+                value_inputted = IO.__input_with_prefill(prompt, text)
+                json_parsed = loads(value_inputted)
+                return json_parsed
+            except:
+                print('\nO valor digitado é inválido! Favor tentar novamente.\n')
+
+    @staticmethod
+    def __input_with_prefill(prompt, text):
+        def hook():
+            readline.insert_text(text)
+            readline.redisplay()
+        readline.set_pre_input_hook(hook)
+        result = input(prompt)
+        readline.set_pre_input_hook()
+        return result
